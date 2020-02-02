@@ -1,0 +1,41 @@
+#!/usr/bin/python3
+
+
+import argparse
+import os
+from moviepy.editor import VideoFileClip
+
+def start(arguments):
+    print('*****START PROCESSING*****')
+
+    if not os.path.isfile(arguments.movie_file):
+        print('file not exsit')
+        exit(-1)
+
+    video = VideoFileClip(arguments.movie_file)
+    current_path = os.getcwd()
+
+    print('DURATION: {}s'.format(video.duration))
+    print('CURRENT_PATH: {}'.format(current_path))
+
+    # handle --cut-by-time
+    if arguments.time:
+        unit = 
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='this tool used to cut mp4 video file.')
+
+    # add required movie file parameter
+    parser.add_argument('movie_file', help='the string of movie file to be handled.')
+
+    # add mutually exclusively parameters group
+    group = parser.add_mutually_exclusive_group()
+
+    #1 add --cut-by-time to cut it ti equally parts
+    group.add_argument('--cut-by-time', help='its value consist of a integer follow a time unit,such as s(seconds), m(minutes).eg: --cut-by-time=40s   --cut-by-time=30m', dest='time')
+
+
+    # handle arguments
+    arguments = parser.parse_args()
+
+    # start handle
+    start(arguments)
