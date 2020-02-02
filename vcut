@@ -40,6 +40,47 @@ def getList(duration, unit_value):
 
     return res
 
+def getCutData(f):
+    res = []
+
+    if not os.path.isfile(f):
+        raise CustomError('File not exist')
+
+    file = open(f)
+    datas = file.readlines()
+
+    # check all datas are valid
+    for l in datas:
+        if ':' not in l:
+            raise CustomError('Invalid data in file')
+
+        d1, d2 = l.split(':')
+
+        d1 = d1.strip(); d2 = d2.strip()
+
+        try:
+            if not ( ( (float == type(eval(d1))) or (int == type(eval(d1))) ) and \
+                ( (float == type(eval(d2))) or (int == type(eval(d2))) ) ):
+            
+                raise CustomError('Invalid datas in file')
+        except:
+            raise CustomError('Invalid datas in file')
+
+        # append data
+        if int == type(eval(d1)):
+            d1 = int(d1)
+        else:
+            d1 = float(d1)
+
+        if int == type(eval(d2)):
+            d2 = int(d2)
+        else:
+            d2 = float(d2)
+        
+        res.append([d1, d2])
+
+    return res
+
 def start(arguments):
     print('*****START PROCESSING*****')
 
@@ -48,6 +89,20 @@ def start(arguments):
 
     video = VideoFileClip(arguments.movie_file)
     current_path = os.getcwd()
+    save_dir = None
+    video_name = video.filename.split('.')[0] + "-{}.mp4"
+
+    # set save dir
+    if arguments.save_dir:
+        if not os.path.isdir(arguments.save_dir):
+            try:
+                os.makedirs(arguments.save_dir)
+            except:
+                raise CustomError('Cannot create save dir')
+        save_dir = arguments.save_dir
+    else:
+        save_dir = '.'
+    
 
     print('DURATION: {}s'.format(video.duration))
     print('CURRENT_PATH: {}'.format(current_path))
@@ -57,18 +112,36 @@ def start(arguments):
         value_s = getValue(arguments.time)  # its unit is seconds
         range_list = getList(video.duration, value_s)
 
-        video_name = "video-{}.mp4"
         count = 1
 
         for cut_data in range_list:
             cut = video.subclip(cut_data[0], cut_data[1])
-            cut.write_videofile(video_name.format(count))
+            cut.write_videofile(os.path.join( save_dir, video_name.format(count) ))
             print('* ' + video_name.format(count) + 'has done')
 
             count = count + 1
 
-        print('* TOTAL FILE: ' + str(count))
+        print('* TOTAL FILE: ' + str(count - 1))
         print('***** ALL DONE *****')
+
+    # hadle --cut-by-file
+    if arguments.file:
+        cut_datas = getCutData(arguments.file)
+
+        count = 1
+
+        for data in cut_datas:
+            print(data)
+            cut = video.subclip(data[0], data[1])
+            cut.write_videofile(os.path.join( save_dir, video_name.format(count) ))
+
+            print('* ' + video_name.format(count) + 'has done')
+
+            count += 1
+
+        print('* TOTAL FILE: ' + str(count - 1))
+        print('***** ALL DONE *****')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='this tool used to cut mp4 video file.')
@@ -76,12 +149,17 @@ if __name__ == '__main__':
     # add required movie file parameter
     parser.add_argument('movie_file', help='the string of movie file to be handled.')
 
+    # add save dir parameter
+    parser.add_argument('-s', '--save-dir', help='Specific custom save dir for handled videos, each line specific two datas expressing start point and end point seperated by colon', dest='save_dir')
+
     # add mutually exclusively parameters group
     group = parser.add_mutually_exclusive_group()
 
     #1 add --cut-by-time to cut it ti equally parts
     group.add_argument('--cut-by-time', help='its value consist of a integer follow a time unit,such as s(seconds), m(minutes).eg: --cut-by-time=40s   --cut-by-time=30m', dest='time')
 
+    #2 add --cut-by-file or -f to provide cut data in files
+    group.add_argument('-f', '--cut-by-file', help='use cut data provided by file to cut video', dest='file')
 
     # handle arguments
     arguments = parser.parse_args()
