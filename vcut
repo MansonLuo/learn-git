@@ -5,12 +5,46 @@ import argparse
 import os
 from moviepy.editor import VideoFileClip
 
+class CustomError(Exception):
+    def __init__(self, error_msg):
+        self.error_msg = error_msg
+
+def getValue(unit):
+    # Get time unit
+    u = unit[-1:]
+    if u not in ['s', 'm']:
+        raise CustomError('Invalid unit')
+
+    # Get value 
+    v = unit[:-1]
+    if not v.isdigit():
+        raise CustomError('Invalid value within unit')
+    v = int(unit[:-1])
+
+    # return seconds
+    if u == 's':
+        return v
+    elif u == 'm':
+        return v * 60
+
+def getList(duration, unit_value):
+    count = int(duration // unit_value)
+    res = []
+    stt = 0
+
+    for i in range(count):
+        res.append([stt, stt + unit_value])
+        stt += unit_value
+
+    res.append([stt, duration])
+
+    return res
+
 def start(arguments):
     print('*****START PROCESSING*****')
 
     if not os.path.isfile(arguments.movie_file):
-        print('file not exsit')
-        exit(-1)
+        raise CustomError('File not exist.')
 
     video = VideoFileClip(arguments.movie_file)
     current_path = os.getcwd()
@@ -20,7 +54,22 @@ def start(arguments):
 
     # handle --cut-by-time
     if arguments.time:
-        unit = 
+        value_s = getValue(arguments.time)  # its unit is seconds
+        range_list = getList(video.duration, value_s)
+
+        video_name = "video-{}.mp4"
+        count = 1
+
+        for cut_data in range_list:
+            cut = video.subclip(cut_data[0], cut_data[1])
+            cut.write_videofile(video_name.format(count))
+            print('* ' + video_name.format(count) + 'has done')
+
+            count = count + 1
+
+        print('* TOTAL FILE: ' + str(count))
+        print('***** ALL DONE *****')
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='this tool used to cut mp4 video file.')
 
