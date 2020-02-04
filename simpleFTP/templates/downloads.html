@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Download Files</title>
+		<meta charset="utf-8">
+		
+<style>
+	ul {
+		background-color: pink;
+		border: solid 2px black;
+	}
+</style>
+
+	</head>
+
+	<body>
+		
+		<ul>
+			{% for root, dirs, files in walk %}
+				<li>{{ root }} <br>
+					<ul>
+						{% for dir in dirs %}
+							<li>{{ dir }} </li>
+						{% endfor %}
+
+						{% for file in files %}
+							<li><a href="{{ root + '/' + file }}">{{ file }} </a></li>
+						{% endfor %}
+					</ul>
+
+				</li>
+			{% endfor %}
+		</ul>
+	</body>
+
+
+</html>
