@@ -11,7 +11,7 @@ app.secret_key = "d#%d/23^"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 10000 * 1024 * 1024
 
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'zip', 'app', 'deb', 'exe'])
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'zip', 'app', 'deb', 'exe', 'srt'])
 
 
 def allowed_file(filename):
