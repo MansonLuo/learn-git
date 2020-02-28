@@ -1,0 +1,23 @@
+#console {
+	position: absolute;
+	width: 100vw;
+	height: 30vh;
+	bottom: 0;
+	left: 0;
+	background-color: grey;
+	font-size: 2rem;
+	color: black;
+	text-align: center;
+	display: block;
+}
+
+#stage {
+	width: 500px;
+	height: 500px;
+	background: blue;
+	font-size: 4rem;
+}	
+
+h5 {
+	font-size: 4rem;
+}

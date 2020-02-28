@@ -1,0 +1,26 @@
+# create development tmux session
+tmux new-session -s test-jquery -n html -d
+
+#create html session
+tmux send-keys -t test-jquery 'cd ~/sd*/wor*/le*; vim index.html' C-m
+
+#create new windown for css
+tmux new-window -n css
+tmux send-keys -t test-jquery 'cd ~/sd*/wor*/le*; vim css/main*' C-m
+
+#create new window for js
+tmux new-window -n js
+tmux send-keys -t test-jquery 'cd ~/sd*/wor*/le*; vim js/app.js' C-m 
+
+#create new window for test
+tmux new-window -n test
+tmux send-keys -t test-jquery 'cd ~/sd*/wor*/le*' C-m
+
+#create new windwo for flask editor 
+tmux new-window -n flask-editor
+tmux send-keys -t test-jquery 'cd ~/sd*/wor*/le*' C-m
+
+# create new window for flask server
+tmux new-window -n server
+tmux send-keys -t test-jquery 'cd ~/sd*/wor*/le*' C-m
+
